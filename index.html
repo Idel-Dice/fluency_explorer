@@ -1,779 +1,796 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lectura y Fluidez | Bilingual Reading Speed Tracker</title>
-    <!-- Tailwind CSS for modern styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts & Font Awesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        fredoka: ['Fredoka', 'sans-serif'],
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            400: '#38bdf8',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                        },
-                        accent: {
-                            green: '#22c55e',
-                            amber: '#f59e0b',
-                            rose: '#f43f5e',
-                            purple: '#8b5cf6'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .word-highlight-active {
-            background-color: #fef08a;
-            color: #854d0e;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-weight: 700;
-            transition: all 0.15s ease;
-        }
-        .word-matched {
-            color: #16a34a;
-            font-weight: 600;
-        }
-        .pulse-subtle {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FluentRead - Dual Immersion Reading Speed Tracker</title>
+  <!-- Google Fonts for Kids-Friendly & Clean Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --secondary: #06b6d4;
+      --bg-main: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --highlight-spoken: #a7f3d0;
+      --highlight-current: #fef08a;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px 16px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    header {
+      text-align: center;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      color: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+
+    header h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      font-size: 1rem;
+      opacity: 0.92;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      align-items: end;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .control-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    select, button {
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .btn {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    /* Target Benchmark Display */
+    .target-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 12px 20px;
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+
+    .target-banner .target-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .target-badge {
+      background: var(--primary);
+      color: white;
+      font-family: 'Fredoka', sans-serif;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    /* Reading Passage Display */
+    .passage-container {
+      margin-top: 16px;
+      padding: 24px;
+      background-color: #fafafa;
+      border-radius: 12px;
+      border: 1px solid #f1f5f9;
+      min-height: 180px;
+      line-height: 2;
+      font-size: 1.35rem;
+      letter-spacing: 0.2px;
+      word-spacing: 2px;
+    }
+
+    .word {
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+
+    .word.spoken {
+      background-color: var(--highlight-spoken);
+    }
+
+    .word.current {
+      background-color: var(--highlight-current);
+      text-decoration: underline;
+    }
+
+    /* Timer & Metrics Dashboard */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .metric-card {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .metric-value {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 2rem;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    /* Action Toolbar */
+    .action-toolbar {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    /* History Table */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+
+    .history-table th, .history-table td {
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-table th {
+      background-color: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .badge-met {
+      background-color: #d1fae5;
+      color: #065f46;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    .badge-missed {
+      background-color: #fee2e2;
+      color: #991b1b;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 640px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      .passage-container {
+        font-size: 1.15rem;
+      }
+    }
+  </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 min-h-screen flex flex-col">
+<body>
 
-    <!-- Header / Navbar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-brand-500 text-white p-2.5 rounded-2xl shadow-md">
-                    <i class="fa-solid fa-book-open-reader text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="font-fredoka text-2xl font-bold text-slate-800 tracking-wide">Fluency Explorer</h1>
-                    <p class="text-xs text-slate-500 font-medium">Lectura y Fluidez (Grades 1–5)</p>
-                </div>
-            </div>
-
-            <!-- Target Goal Badge -->
-            <div id="target-badge" class="hidden sm:flex items-center gap-2 bg-amber-50 border border-amber-200 px-3.5 py-1.5 rounded-full">
-                <i class="fa-solid fa-trophy text-amber-500 text-sm"></i>
-                <span class="text-xs font-semibold text-amber-800">Target Goal: <span id="target-wpm-display" class="font-bold text-sm text-amber-900">79</span> WPM</span>
-            </div>
-        </div>
+  <div class="container">
+    <header>
+      <h1>FluentRead / Lectura Fluida</h1>
+      <p>Dual Immersion Reading Speed & Accuracy Tracker</p>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-6xl mx-auto px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        <!-- Left Controls & Passage Display (2 Columns on Large Screens) -->
-        <section class="lg:col-span-2 space-y-6">
-
-            <!-- Selection Controls Card -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    
-                    <!-- Language Selection -->
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                            <i class="fa-solid fa-language text-brand-500 mr-1"></i> Language / Idioma
-                        </label>
-                        <select id="language-select" class="w-full bg-slate-50 border border-slate-300 font-semibold rounded-xl px-3 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="en">English 🇺🇸</option>
-                            <option value="es" selected>Español 🇲🇽</option>
-                        </select>
-                    </div>
-
-                    <!-- Grade Level Selection -->
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                            <i class="fa-solid fa-graduation-cap text-brand-500 mr-1"></i> Grade / Grado
-                        </label>
-                        <select id="grade-select" class="w-full bg-slate-50 border border-slate-300 font-semibold rounded-xl px-3 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <option value="1">Grade 1 (60 WPM Target)</option>
-                            <option value="2" selected>Grade 2 (79 WPM Target)</option>
-                            <option value="3">Grade 3 (100 WPM Target)</option>
-                            <option value="4">Grade 4 (115 WPM Target)</option>
-                            <option value="5">Grade 5 (130 WPM Target)</option>
-                        </select>
-                    </div>
-
-                    <!-- Passage Selector -->
-                    <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
-                            <i class="fa-solid fa-file-lines text-brand-500 mr-1"></i> Passage / Lectura
-                        </label>
-                        <select id="passage-select" class="w-full bg-slate-50 border border-slate-300 font-semibold rounded-xl px-3 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <!-- Populated dynamically via JS -->
-                        </select>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Reading Reader Canvas -->
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[360px]">
-                
-                <!-- Passage Title & Meta -->
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                    <div>
-                        <h2 id="passage-title" class="font-fredoka text-xl text-slate-800 font-bold">Passage Title</h2>
-                        <span id="passage-word-count" class="text-xs text-slate-400 font-medium">0 words</span>
-                    </div>
-                    <button id="listen-demo-btn" class="text-xs text-brand-600 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-volume-high"></i> Listen Sample
-                    </button>
-                </div>
-
-                <!-- Reading Text Display Area -->
-                <div id="passage-text-container" class="text-xl leading-relaxed text-slate-700 font-medium tracking-wide my-auto py-2">
-                    <!-- Words injected here -->
-                </div>
-
-                <!-- Speech Recognition Feedback Status Bar -->
-                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                    <div class="flex items-center gap-2">
-                        <span id="mic-indicator" class="w-3 h-3 rounded-full bg-slate-300"></span>
-                        <span id="mic-status-text">Mic Ready</span>
-                    </div>
-                    <div id="speech-mode-badge" class="font-semibold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md">
-                        Mode: Speech Recognition
-                    </div>
-                </div>
-            </div>
-
-            <!-- Timer and Interactive Action Bar -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
-                
-                <!-- Stopwatch Clock -->
-                <div class="flex items-center gap-3">
-                    <div class="bg-slate-100 p-3 rounded-2xl text-slate-600">
-                        <i class="fa-regular fa-clock text-2xl"></i>
-                    </div>
-                    <div>
-                        <div class="text-xs text-slate-400 uppercase font-bold tracking-wider">Elapsed Time</div>
-                        <div id="timer-display" class="font-mono text-3xl font-extrabold text-slate-800">00:00</div>
-                    </div>
-                </div>
-
-                <!-- Primary Action Buttons -->
-                <div class="flex items-center gap-3 w-full sm:w-auto">
-                    <button id="start-btn" class="flex-1 sm:flex-initial bg-brand-500 hover:bg-brand-600 active:scale-95 text-white font-fredoka text-lg font-semibold px-8 py-3.5 rounded-2xl shadow-lg shadow-brand-500/20 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-play"></i> Start Reading
-                    </button>
-                    <button id="stop-btn" disabled class="flex-1 sm:flex-initial bg-slate-200 text-slate-400 cursor-not-allowed font-fredoka text-lg font-semibold px-8 py-3.5 rounded-2xl shadow-none transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-square"></i> Finish
-                    </button>
-                </div>
-
-            </div>
-
-        </section>
-
-        <!-- Right Side Dashboard & History -->
-        <section class="space-y-6">
-
-            <!-- Latest Score Card -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
-                <h3 class="font-fredoka text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-line text-brand-500"></i> Performance Results
-                </h3>
-
-                <div class="grid grid-cols-2 gap-3 mb-4">
-                    <!-- WPM Metric Card -->
-                    <div class="bg-brand-50 border border-brand-100 p-4 rounded-xl text-center">
-                        <span class="text-xs font-bold text-brand-600 uppercase tracking-wider block">Speed (WPM)</span>
-                        <span id="score-wpm" class="font-fredoka text-4xl font-bold text-brand-700 my-1 block">--</span>
-                        <span id="score-wpm-status" class="text-[11px] font-semibold text-slate-500">Ready to test</span>
-                    </div>
-
-                    <!-- Accuracy Metric Card -->
-                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl text-center">
-                        <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider block">Accuracy</span>
-                        <span id="score-accuracy" class="font-fredoka text-4xl font-bold text-emerald-700 my-1 block">--%</span>
-                        <span id="score-words-read" class="text-[11px] font-semibold text-slate-500">0 words read</span>
-                    </div>
-                </div>
-
-                <!-- Benchmark Progress Meter -->
-                <div class="space-y-1.5">
-                    <div class="flex justify-between text-xs font-semibold text-slate-600">
-                        <span>Grade Benchmark Goal</span>
-                        <span id="benchmark-goal-text">79 WPM</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                        <div id="benchmark-progress-bar" class="bg-brand-500 h-full w-0 transition-all duration-500 rounded-full"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Live Speech Transcribed Transcript Box -->
-            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
-                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                    <i class="fa-solid fa-microphone-lines"></i> Recognized Speech Log
-                </h4>
-                <div id="speech-transcript-box" class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-600 min-h-[60px] max-h-[100px] overflow-y-auto italic">
-                    Spoken words will appear here in real time...
-                </div>
-            </div>
-
-            <!-- Practice Session History -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col min-h-[220px]">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="font-fredoka text-md font-bold text-slate-800 flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-slate-400"></i> Attempt History
-                    </h3>
-                    <button id="clear-history-btn" class="text-[11px] text-slate-400 hover:text-rose-500 font-semibold transition">
-                        Clear
-                    </button>
-                </div>
-
-                <div id="history-list" class="space-y-2 flex-1 overflow-y-auto max-h-[220px] text-xs">
-                    <!-- History logs populated via JS -->
-                    <div class="text-center text-slate-400 py-8 font-medium">No practice attempts saved yet.</div>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <!-- Modal Notification Alert Box (Never use native alert()) -->
-    <div id="custom-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 text-center space-y-4">
-            <div id="modal-icon-container" class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-xl">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-            </div>
-            <h3 id="modal-title" class="font-fredoka text-lg font-bold text-slate-800">Notice</h3>
-            <p id="modal-message" class="text-xs text-slate-600 leading-relaxed">Modal message goes here.</p>
-            <button id="modal-close-btn" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-fredoka py-2.5 rounded-xl font-semibold text-sm transition">
-                Got it
-            </button>
+    <!-- Configuration Card -->
+    <div class="card">
+      <div class="controls-grid">
+        
+        <div class="control-group">
+          <label for="mic-select">Microphone Device</label>
+          <select id="mic-select">
+            <option value="">Default Microphone</option>
+          </select>
         </div>
+
+        <div class="control-group">
+          <label for="lang-select">Language</label>
+          <select id="lang-select" onchange="onConfigChange()">
+            <option value="en">English</option>
+            <option value="es">Español (Spanish)</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="grade-select">Grade Level</label>
+          <select id="grade-select" onchange="onConfigChange()">
+            <option value="1">1st Grade / 1º Primaria</option>
+            <option value="2" selected>2nd Grade / 2º Primaria (Target: 79 WPM)</option>
+            <option value="3">3rd Grade / 3º Primaria</option>
+            <option value="4">4th Grade / 4º Primaria</option>
+            <option value="5">5th Grade / 5º Primaria</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="track-select">Reading Track</label>
+          <select id="track-select" onchange="loadPassage()">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Target WPM Banner -->
+      <div class="target-banner">
+        <div class="target-info">
+          <span>Target Minimum Benchmark:</span>
+          <span class="target-badge" id="target-wpm-badge">79 WPM</span>
+        </div>
+        <button class="btn btn-secondary" style="padding: 4px 12px; font-size: 0.85rem;" onclick="pickRandomTrack()">🔀 Randomize Passage</button>
+      </div>
     </div>
 
-    <!-- Application JavaScript Logic -->
-    <script>
-        // Passage Library aligned with Grades 1-5 benchmarks for Spanish & English
-        const PASSAGE_LIBRARY = {
-            en: {
-                1: [
-                    { id: "e1_1", title: "The Red Fox", text: "The red fox ran up the big hill. He saw a small bird in a tree. The bird sang a sweet song. The fox sat down to listen." },
-                    { id: "e1_2", title: "My Fun Pet", text: "I have a pet dog named Sam. Sam likes to run and play in the sun. We get a big ball and toss it fast. Sam brings it back to me." }
-                ],
-                2: [
-                    { id: "e2_1", title: "The Ocean Adventure", text: "Leo and May walked along the sandy beach. They found shiny pink sea shells near the blue water. Suddenly a little quiet crab scrambled out from under a rock. It moved sideways into the cool foam. They smiled and watched it swim away." },
-                    { id: "e2_2", title: "The Helpful Garden", text: "Grandma planted red tomatoes and bright orange carrots in her sunny garden. Every afternoon after school, Sofie waters the green leaves. Bees buzz happily around the yellow flowers as butterflies dance through the warm gentle breeze." }
-                ],
-                3: [
-                    { id: "e3_1", title: "The Mysterious Treehouse", text: "High in the branches of the ancient oak tree stood an abandoned wood house. Mateo climbed the wooden ladder carefully with his flashlight tucked into his pocket. Inside he discovered an old treasure map wrapped tightly with leather ribbon. The map showed secret trails hidden deep across the green forest." },
-                    { id: "e3_2", title: "Baking Bread Together", text: "Early Saturday morning, Oliver helped his mother bake fresh bread in the warm kitchen. They measured flour, warm water, and yeast into a giant silver bowl. After stirring the mixture, they gently kneaded the dough on the flour-dusted counter until it was smooth and stretchy." }
-                ],
-                4: [
-                    { id: "e4_1", title: "The Solar System Journey", text: "Our solar system contains eight amazing planets that orbit around a brilliant burning star called the Sun. Earth is the third planet from the Sun and is the only world known to support living plants and animals. Scientists use powerful telescopes and brave space probes to study distant ice giants like Neptune and Uranus." },
-                    { id: "e4_2", title: "The Monarch Migration", text: "Every autumn, millions of monarch butterflies undertake an incredible journey across North America. Traveling thousands of miles south toward the warm forests of Mexico, these delicate insects navigate using the position of the sun and magnetic fields. Their migration is one of the most astonishing events in nature." }
-                ],
-                5: [
-                    { id: "e5_1", title: "The Power of Renewable Energy", text: "Across the globe, clean renewable energy sources are replacing fossil fuels to protect our fragile environment. Wind turbines harvest energy from moving air currents, while modern solar panels convert sunlight directly into usable electricity. By investing in sustainable technologies, communities reduce harmful air pollution and build a cleaner future for generations to come." },
-                    { id: "e5_2", title: "The History of Printing", text: "Before Johannes Gutenberg invented the movable type printing press in the fifteenth century, books had to be copied by hand with feather pens. This long process made books rare, expensive, and accessible only to wealthy scholars. The printing press revolutionized education by allowing ideas to spread rapidly throughout the world." }
-                ]
-            },
-            es: {
-                1: [
-                    { id: "s1_1", title: "El Oso Sol", text: "El oso sol vive en el bosque verde. A él le gusta comer miel dulce. Salta en las piedras con sus amigos. Todos están muy felices." },
-                    { id: "s1_2", title: "La Gata Luna", text: "Luna es una gata blanca y suave. Duerme en una cama cerca de la ventana. Cuando ve un pajarito, abre los ojos y mueve la cola." }
-                ],
-                2: [
-                    { id: "s2_1", title: "Un Día en la Playa", text: "Sofía y su hermano caminan por la orilla del mar. Ellos encuentran conchitas brillantes de color rosa. De repente, un cangrejo pequeño sale de una piedra y camina de lado hacia el agua azul. Los dos niños sonríen mientras el agua moja sus pies." },
-                    { id: "s2_2", title: "El Jardín de la Abuela", text: "La abuela sembró tomates rojos y zanahorias en su bonito jardín. Todas las tardes, Mateo riega las plantas con su regadera verde. Las abejas vuelan entre las flores amarillas y las mariposas vuelan alegres bajo el cálido sol de primavera." }
-                ],
-                3: [
-                    { id: "s3_1", title: "El Castillo Encantado", text: "En lo alto de la montaña verde se encuentra un antiguo castillo de piedra. Camila y su amigo Diego subieron el camino con mucha curiosidad. Cerca de la entrada principal encontraron un cofre de madera con una llave dorada. Dentro había un mapa viejo que mostraba el camino a un río cristalino." },
-                    { id: "s3_2", title: "La Falsa Alarma del Gato", text: "Un pequeño gato negro saltó sobre la cerca de madera del patio. Los pajaritos volaron rápido hacia la rama más alta del gran árbol. Aunque el gato intentó alcanzarlos con cautela, las aves cantaron alegres sabiendo que estaban completamente seguras en la cima." }
-                ],
-                4: [
-                    { id: "s4_1", title: "El Planeta Tierra y el Espacio", text: "Nuestro sistema solar tiene ocho planetas principales que giran alrededor del Sol. La Tierra es el tercer planeta y posee grandes océanos de agua líquida que permiten la vida de miles de especies. Los astrónomos utilizan telescopios gigantes y satélites modernos para explorar la superficie de Marte y los helados anillos de Saturno." },
-                    { id: "s4_2", title: "La Gran Viajera Mariposa", text: "Durante cada otoño, millones de mariposas monarca realizan un viaje increíble a través de América del Norte. Recorren miles de kilómetros hacia los bosques templados de México para protegerse del frío invierno. Este fenómeno natural es considerado una de las migraciones más impresionantes del planeta." }
-                ],
-                5: [
-                    { id: "s5_1", title: "La Conservación de los Bosques", text: "Los bosques tropicales son fundamentales para la salud de nuestro planeta porque producen oxígeno y regulan el clima global. Miles de plantas únicas y animales fascinantes habitan en estos ecosistemas interconectados. Al reforestar áreas dañadas y reducir el uso innecesario de papel, ayudamos a preservar la biodiversidad para el futuro." },
-                    { id: "s5_2", title: "La Historia de la Navegación", text: "Hace siglos, los antiguos marineros navegaban por los océanos observando la posición de las estrellas y el movimiento de los vientos. Con la invención de la brújula magnética y mapas más precisos, los exploradores pudieron cruzar mares desconocidos y conectar continentes distantes, cambiando la historia del comercio mundial." }
-                ]
-            }
-        };
+    <!-- Passage Reading Card -->
+    <div class="card">
+      <div class="passage-container" id="passage-box">
+        <!-- Reading text with span wrappers dynamically inserted here -->
+      </div>
 
-        // Standard Benchmark Minimum WPM Goals by Grade Level
-        const GRADE_BENCHMARKS = {
-            1: 60,
-            2: 79,  // Target highlighted by parent
-            3: 100,
-            4: 115,
-            5: 130
-        };
+      <!-- Live Dashboard -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value" id="timer-val">00:00</div>
+          <div class="metric-label">Time Elapsed</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="wpm-val">0</div>
+          <div class="metric-label">Words Per Minute</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="accuracy-val">100%</div>
+          <div class="metric-label">Speech Accuracy</div>
+        </div>
+      </div>
 
-        // Core App State
-        let currentLanguage = 'es';
-        let currentGrade = 2;
-        let currentPassage = null;
-        let wordElements = [];
-        
-        let isReading = false;
-        let startTime = 0;
-        let timerInterval = null;
-        let elapsedSeconds = 0;
+      <!-- Control Buttons -->
+      <div class="action-toolbar">
+        <button class="btn btn-primary" id="btn-start" onclick="startSession()">▶ Start Reading</button>
+        <button class="btn btn-danger" id="btn-stop" onclick="stopSession()" disabled>⏹ Finish & Calculate</button>
+        <button class="btn btn-secondary" onclick="resetSession()">🔄 Reset</button>
+      </div>
+    </div>
 
-        // Speech Recognition Setup
-        let recognition = null;
-        let speechSupported = false;
-        let recognizedWords = [];
-        let currentWordIndex = 0;
+    <!-- Attempt History Card -->
+    <div class="card">
+      <h3 style="font-family: 'Fredoka', sans-serif; margin-bottom: 12px;">Reading Session History</h3>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Lang</th>
+            <th>Grade</th>
+            <th>Track</th>
+            <th>Time</th>
+            <th>WPM</th>
+            <th>Target Met</th>
+          </tr>
+        </thead>
+        <tbody id="history-list">
+          <!-- Dynamically populated from localStorage -->
+        </tbody>
+      </table>
+    </div>
 
-        // DOM Elements
-        const languageSelect = document.getElementById('language-select');
-        const gradeSelect = document.getElementById('grade-select');
-        const passageSelect = document.getElementById('passage-select');
-        const passageTitleEl = document.getElementById('passage-title');
-        const passageWordCountEl = document.getElementById('passage-word-count');
-        const passageContainer = document.getElementById('passage-text-container');
-        const timerDisplay = document.getElementById('timer-display');
-        const startBtn = document.getElementById('start-btn');
-        const stopBtn = document.getElementById('stop-btn');
-        const listenDemoBtn = document.getElementById('listen-demo-btn');
-        
-        const scoreWpmEl = document.getElementById('score-wpm');
-        const scoreWpmStatusEl = document.getElementById('score-wpm-status');
-        const scoreAccuracyEl = document.getElementById('score-accuracy');
-        const scoreWordsReadEl = document.getElementById('score-words-read');
-        const targetWpmDisplay = document.getElementById('target-wpm-display');
-        const benchmarkGoalText = document.getElementById('benchmark-goal-text');
-        const benchmarkProgressBar = document.getElementById('benchmark-progress-bar');
-        
-        const micIndicator = document.getElementById('mic-indicator');
-        const micStatusText = document.getElementById('mic-status-text');
-        const speechModeBadge = document.getElementById('speech-mode-badge');
-        const speechTranscriptBox = document.getElementById('speech-transcript-box');
-        const historyListEl = document.getElementById('history-list');
-        const clearHistoryBtn = document.getElementById('clear-history-btn');
+  </div>
 
-        // Modal Elements
-        const customModal = document.getElementById('custom-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalMessage = document.getElementById('modal-message');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
+  <script>
+    // --- EDUCATIONAL BENCHMARK TARGETS (WPM) ---
+    const WPM_TARGETS = {
+      1: 60,
+      2: 79,  // Target requested by parent
+      3: 100,
+      4: 115,
+      5: 130
+    };
 
-        // Initialize Application
-        window.addEventListener('DOMContentLoaded', () => {
-            initSpeechRecognition();
-            setupEventListeners();
-            updateGradeAndPassages();
-            loadHistory();
+    // --- MULTIPLE PASSAGE TRACKS TO PREVENT MEMORIZATION ---
+    const PASSAGES = {
+      en: {
+        1: [
+          { id: "A", title: "Track A: The Red Fox", text: "The quick red fox jumps over the small log. He sits under a big green tree and watches the birds fly in the sky." },
+          { id: "B", title: "Track B: A Sunny Day", text: "Today is a warm and sunny day. Pam goes to the park with her dog. They play catch with a bright yellow ball." },
+          { id: "C", title: "Track C: The Little Cat", text: "My little cat likes to sleep on the soft rug. When she wakes up, she drinks milk from a white dish." }
+        ],
+        2: [
+          { id: "A", title: "Track A: The Lost Puppy", text: "Leo found a small puppy near the school garden. The puppy had brown ears and a tiny tail. Leo checked the collar and called the owner right away." },
+          { id: "B", title: "Track B: Library Adventure", text: "Mia loves to visit the city library on rainy afternoons. She searches for books about ocean animals and space exploration." },
+          { id: "C", title: "Track C: The Treehouse", text: "Sam and Sam's sister built a wooden treehouse in their backyard. They placed a round blue rug inside and read comics together." }
+        ],
+        3: [
+          { id: "A", title: "Track A: The Rainforest Exploration", text: "Rainforests are full of tall trees and amazing creatures. Colorful parrots fly between the high branches, while playful monkeys swing gracefully from vines." },
+          { id: "B", title: "Track B: Deep Ocean Wonders", text: "The ocean floor is home to giant squids and glowing jellyfish. Oceanographers submerge in submarine vessels to study these creatures in the dark water." },
+          { id: "C", title: "Track C: Desert Ecosystems", text: "Deserts may seem dry and empty, but many nocturnal animals wake up after sunset. Snakes, owls, and foxes hunt when the temperature cools down." }
+        ],
+        4: [
+          { id: "A", title: "Track A: Mountain Expeditions", text: "Scaling steep mountain peaks demands careful physical preparation and reliable thermal equipment. Climbers respect unpredictable weather shifts and navigate icy glaciers together." },
+          { id: "B", title: "Track B: Renewable Energy Breakthroughs", text: "Engineers generate electricity using wind turbines and high-efficiency solar panels. Harnessing natural forces helps preserve air quality and reduce greenhouse gases." },
+          { id: "C", title: "Track C: Historical Discoveries", text: "Archaeologists carefully brush away layers of sand to reveal ancient stone monuments. Each artifact provides clues about daily life centuries ago." }
+        ],
+        5: [
+          { id: "A", title: "Track A: Space Exploration Milestones", text: "Astronomers utilize orbiting space telescopes to analyze light emitted from distant galaxies billions of light-years away. Analyzing spectral data unlocks fundamental secrets about cosmic origins." },
+          { id: "B", title: "Track B: Marine Ecosystem Preservation", text: "Coral reefs support diverse underwater species, acting as vital nurseries for marine life. Protecting ocean habitats against pollution ensures biological diversity for future generations." },
+          { id: "C", title: "Track C: Artificial Intelligence in Modern Times", text: "Computer scientists develop algorithms capable of analyzing complex mathematical patterns rapidly. Responsible application of technology enhances medical diagnostics and scientific research globally." }
+        ]
+      },
+      es: {
+        1: [
+          { id: "A", title: "Pista A: El Perro Lalo", text: "El perro Lalo corre en el parque. A Lalo le gusta jugar con su pelota roja y saltar alto en el pasto." },
+          { id: "B", title: "Pista B: La Casa Blanca", text: "Mi casa es grande y blanca. En el jardín hay flores amarillas y un árbol alto donde cantan los pájaros." },
+          { id: "C", title: "Pista C: El Gato de Sofía", text: "Sofía tiene un gato negro con ojos verdes. El gato duerme en una silla suave cerca de la ventana." }
+        ],
+        2: [
+          { id: "A", title: "Pista A: La Excursión Escolar", text: "La clase de la maestra Elena fue al museo de ciencias. Los estudiantes vieron esqueletos de dinosaurios y aprendieron cómo vivían hace muchos años." },
+          { id: "B", title: "Pista B: Un Día en la Playa", text: "Carlos y su familia caminaron por la orilla del mar. Encontraron caracoles brillantes y construyeron un gran castillo de arena." },
+          { id: "C", title: "Pista C: La Huerta Familiar", text: "En la primavera, sembramos tomates, lechugas y fresas en el jardín. Todos los días regamos las plantas con agua fresca." }
+        ],
+        3: [
+          { id: "A", title: "Pista A: La Selva Amazónica", text: "La selva amazónica tiene la mayor cantidad de plantas y animales del planeta. Los guacamayos vuelan alto mientras los jaguares caminan en silencio." },
+          { id: "B", title: "Pista B: El Viaje en Tren", text: "El tren cruza las altas montañas y los valles verdes. Desde las ventanas, los pasajeros admiran ríos cristalinos y pueblos pintorescos." },
+          { id: "C", title: "Pista C: El Secreto de las Abejas", text: "Las abejas recolectan néctar de las flores para fabricar miel deliciosa. Son insectos muy importantes para la polinización de los cultivos." }
+        ],
+        4: [
+          { id: "A", title: "Pista A: Civilizaciones Antiguas", text: "Los mayas construyeron impresionantes pirámides de piedra y desarrollaron un calendario astronómico muy exacto observando las estrellas desde sus templos." },
+          { id: "B", title: "Pista B: El Ciclo del Agua", text: "El agua del océano se evapora con el calor del sol y sube a la atmósfera para formar nubes que luego producen lluvia fresca." },
+          { id: "C", title: "Pista C: Las Islas Galápagos", text: "Estas islas albergan especies únicas como tortugas gigantes e iguanas marinas. Charles Darwin estudió estos animales para comprender la evolución." }
+        ],
+        5: [
+          { id: "A", title: "Pista A: La Exploración del Espacio", text: "Los telescopios modernos capturan imágenes de galaxias lejanas que emitieron su luz hace millones de años. Los científicos analizan esta radiación para entender el universo." },
+          { id: "B", title: "Pista B: Conservación Ambiental", text: "Proteger los bosques tropicales es fundamental para regular el clima global y salvaguardar la biodiversidad de ecosistemas vulnerables contra la deforestación." },
+          { id: "C", title: "Pista C: La Invención de la Imprenta", text: "La invención de la imprenta revolucionó el acceso al conocimiento en Europa, permitiendo la difusión masiva de libros y la alfabetización de la sociedad." }
+        ]
+      }
+    };
+
+    // Application State Variables
+    let currentWords = [];
+    let activeWordIndex = 0;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let isRunning = false;
+    let recognition = null;
+    let historyData = [];
+
+    // Initialize Page Controls & Audio Devices
+    window.addEventListener('DOMContentLoaded', () => {
+      populateMicrophones();
+      onConfigChange();
+      loadHistory();
+    });
+
+    // Populate Microphone Audio Devices
+    async function populateMicrophones() {
+      const micSelect = document.getElementById('mic-select');
+      try {
+        // Request initial mic permission to get device labels
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioInputs = devices.filter(device => device.kind === 'audioinput');
+
+        micSelect.innerHTML = '<option value="">Default Microphone</option>';
+        audioInputs.forEach((device, index) => {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.text = device.label || `Microphone ${index + 1}`;
+          micSelect.appendChild(option);
         });
+      } catch (err) {
+        console.warn('Microphone permission not granted or device enumeration unsupported:', err);
+      }
+    }
 
-        // Setup Web Speech API
-        function initSpeechRecognition() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (SpeechRecognition) {
-                speechSupported = true;
-                recognition = new SpeechRecognition();
-                recognition.continuous = true;
-                recognition.interimResults = true;
-                speechModeBadge.textContent = "Mode: Auto Live Voice";
-            } else {
-                speechSupported = false;
-                speechModeBadge.textContent = "Mode: Manual Timer (Mic unsupported)";
-                speechModeBadge.classList.add('text-amber-600', 'bg-amber-50');
-                micStatusText.textContent = "Speech API not available on this browser";
+    // Config Handler when Language or Grade Changes
+    function onConfigChange() {
+      const lang = document.getElementById('lang-select').value;
+      const grade = document.getElementById('grade-select').value;
+      
+      // Update WPM Target Badge
+      const targetWpm = WPM_TARGETS[grade] || 79;
+      document.getElementById('target-wpm-badge').innerText = `${targetWpm} WPM Target`;
+
+      // Update Tracks Selector
+      const trackSelect = document.getElementById('track-select');
+      trackSelect.innerHTML = '';
+      
+      const availableTracks = PASSAGES[lang][grade];
+      availableTracks.forEach(track => {
+        const opt = document.createElement('option');
+        opt.value = track.id;
+        opt.text = track.title;
+        trackSelect.appendChild(opt);
+      });
+
+      loadPassage();
+    }
+
+    function pickRandomTrack() {
+      const trackSelect = document.getElementById('track-select');
+      const options = trackSelect.options;
+      if (options.length > 1) {
+        let randomIndex;
+        do {
+          randomIndex = Math.floor(Math.random() * options.length);
+        } while (randomIndex === trackSelect.selectedIndex);
+        trackSelect.selectedIndex = randomIndex;
+        loadPassage();
+      }
+    }
+
+    function loadPassage() {
+      resetSession();
+      const lang = document.getElementById('lang-select').value;
+      const grade = document.getElementById('grade-select').value;
+      const trackId = document.getElementById('track-select').value || "A";
+
+      const tracks = PASSAGES[lang][grade];
+      const selectedPassage = tracks.find(t => t.id === trackId) || tracks[0];
+
+      // Parse text into individual word spans
+      const passageBox = document.getElementById('passage-box');
+      passageBox.innerHTML = '';
+      
+      currentWords = selectedPassage.text.trim().split(/\s+/);
+      
+      currentWords.forEach((wordText, idx) => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.id = `word-${idx}`;
+        span.innerText = wordText + ' ';
+        passageBox.appendChild(span);
+      });
+
+      activeWordIndex = 0;
+      updateHighlighting();
+    }
+
+    function updateHighlighting() {
+      currentWords.forEach((_, idx) => {
+        const el = document.getElementById(`word-${idx}`);
+        if (!el) return;
+        el.classList.remove('spoken', 'current');
+        if (idx < activeWordIndex) {
+          el.classList.add('spoken');
+        } else if (idx === activeWordIndex && isRunning) {
+          el.classList.add('current');
+        }
+      });
+    }
+
+    // --- SESSION RUNTIME CONTROLS ---
+
+    function startSession() {
+      if (isRunning) return;
+      isRunning = true;
+      secondsElapsed = 0;
+      activeWordIndex = 0;
+      
+      document.getElementById('btn-start').disabled = true;
+      document.getElementById('btn-stop').disabled = false;
+      
+      updateHighlighting();
+      startTimer();
+      initSpeechRecognition();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+        const secs = String(secondsElapsed % 60).padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${mins}:${secs}`;
+        
+        calculateLiveMetrics();
+      }, 1000);
+    }
+
+    function calculateLiveMetrics() {
+      if (secondsElapsed <= 0) return;
+      
+      // Calculate WPM based on completed words
+      const minutes = secondsElapsed / 60;
+      const wpm = Math.round(activeWordIndex / minutes);
+      document.getElementById('wpm-val').innerText = isNaN(wpm) ? 0 : wpm;
+
+      // Accuracy percentage based on progress through the passage
+      const accuracy = Math.round((activeWordIndex / currentWords.length) * 100);
+      document.getElementById('accuracy-val').innerText = `${Math.min(accuracy, 100)}%`;
+    }
+
+    // --- SPEECH RECOGNITION (WEB SPEECH API) ---
+
+    function initSpeechRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        console.warn('Web Speech API is not supported in this browser. Stopwatch timing remains active.');
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = document.getElementById('lang-select').value === 'es' ? 'es-ES' : 'en-US';
+
+      recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript.toLowerCase();
+          matchSpokenWords(transcript);
+        }
+      };
+
+      recognition.onerror = (err) => {
+        console.warn('Speech recognition error:', err.error);
+      };
+
+      recognition.onend = () => {
+        if (isRunning) {
+          recognition.start(); // Auto-restart if session active
+        }
+      };
+
+      try {
+        recognition.start();
+      } catch (err) {
+        console.warn('Could not start recognition:', err);
+      }
+    }
+
+    function matchSpokenWords(transcript) {
+      const spokenTokens = transcript.trim().split(/\s+/);
+      
+      spokenTokens.forEach(token => {
+        if (activeWordIndex < currentWords.length) {
+          const targetWord = currentWords[activeWordIndex].toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
+          const cleanToken = token.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
+
+          if (cleanToken === targetWord || targetWord.includes(cleanToken)) {
+            activeWordIndex++;
+            updateHighlighting();
+            calculateLiveMetrics();
+
+            // Automatic completion if the last word is read
+            if (activeWordIndex >= currentWords.length) {
+              stopSession();
             }
+          }
         }
+      });
+    }
 
-        // Setup Event Listeners
-        function setupEventListeners() {
-            languageSelect.addEventListener('change', (e) => {
-                currentLanguage = e.target.value;
-                updateGradeAndPassages();
-            });
+    function stopSession() {
+      if (!isRunning) return;
+      isRunning = false;
+      
+      clearInterval(timerInterval);
+      
+      if (recognition) {
+        try { recognition.stop(); } catch(e) {}
+      }
 
-            gradeSelect.addEventListener('change', (e) => {
-                currentGrade = parseInt(e.target.value);
-                updateGradeAndPassages();
-            });
+      document.getElementById('btn-start').disabled = false;
+      document.getElementById('btn-stop').disabled = true;
 
-            passageSelect.addEventListener('change', () => {
-                loadSelectedPassage();
-            });
+      // Final WPM Calculation
+      const finalWordCount = activeWordIndex > 0 ? activeWordIndex : currentWords.length;
+      const minutes = Math.max(secondsElapsed / 60, 0.01);
+      const finalWpm = Math.round(finalWordCount / minutes);
+      
+      document.getElementById('wpm-val').innerText = finalWpm;
 
-            startBtn.addEventListener('click', startReadingSession);
-            stopBtn.addEventListener('click', stopReadingSession);
+      saveAttempt(finalWpm);
+    }
 
-            listenDemoBtn.addEventListener('click', playDemoSpeech);
-            clearHistoryBtn.addEventListener('click', clearHistory);
-            modalCloseBtn.addEventListener('click', hideModal);
-        }
+    function resetSession() {
+      stopSession();
+      secondsElapsed = 0;
+      activeWordIndex = 0;
+      
+      document.getElementById('timer-val').innerText = "00:00";
+      document.getElementById('wpm-val').innerText = "0";
+      document.getElementById('accuracy-val').innerText = "100%";
+      
+      updateHighlighting();
+    }
 
-        // Update Grade Options & Passages when controls change
-        function updateGradeAndPassages() {
-            const benchmark = GRADE_BENCHMARKS[currentGrade];
-            targetWpmDisplay.textContent = benchmark;
-            benchmarkGoalText.textContent = `${benchmark} WPM`;
+    // --- LOCAL STORAGE & HISTORY TRACKING ---
 
-            // Populate Passages Dropdown
-            const passages = PASSAGE_LIBRARY[currentLanguage][currentGrade] || [];
-            passageSelect.innerHTML = '';
-            
-            passages.forEach((p, idx) => {
-                const opt = document.createElement('option');
-                opt.value = p.id;
-                opt.textContent = `${p.title} (${p.text.split(' ').length} words)`;
-                passageSelect.appendChild(opt);
-            });
+    function saveAttempt(wpm) {
+      const lang = document.getElementById('lang-select').value.toUpperCase();
+      const grade = document.getElementById('grade-select').value;
+      const track = document.getElementById('track-select').value;
+      const targetWpm = WPM_TARGETS[grade] || 79;
+      const metTarget = wpm >= targetWpm;
 
-            if (passages.length > 0) {
-                loadSelectedPassage();
-            }
-        }
+      const attempt = {
+        date: new Date().toLocaleDateString(),
+        lang: lang,
+        grade: `Grade ${grade}`,
+        track: `Track ${track}`,
+        time: `${secondsElapsed}s`,
+        wpm: wpm,
+        metTarget: metTarget
+      };
 
-        // Load and format passage into selectable word tokens
-        function loadSelectedPassage() {
-            const passageId = passageSelect.value;
-            const passages = PASSAGE_LIBRARY[currentLanguage][currentGrade] || [];
-            currentPassage = passages.find(p => p.id === passageId) || passages[0];
+      historyData.unshift(attempt);
+      if (historyData.length > 10) historyData.pop(); // Keep last 10 attempts
+      
+      localStorage.setItem('fluentread_history', JSON.stringify(historyData));
+      renderHistory();
+    }
 
-            if (!currentPassage) return;
+    function loadHistory() {
+      const saved = localStorage.getItem('fluentread_history');
+      if (saved) {
+        try { historyData = JSON.parse(saved); } catch(e) { historyData = []; }
+      }
+      renderHistory();
+    }
 
-            passageTitleEl.textContent = currentPassage.title;
-            const words = currentPassage.text.split(/\s+/);
-            passageWordCountEl.textContent = `${words.length} words`;
+    function renderHistory() {
+      const historyTable = document.getElementById('history-list');
+      historyTable.innerHTML = '';
 
-            // Clear and render text spans for highlighting
-            passageContainer.innerHTML = '';
-            wordElements = [];
+      if (historyData.length === 0) {
+        historyTable.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">No sessions recorded yet.</td></tr>`;
+        return;
+      }
 
-            words.forEach((word, index) => {
-                const span = document.createElement('span');
-                span.textContent = word + ' ';
-                span.dataset.index = index;
-                span.dataset.cleanWord = cleanWord(word);
-                span.className = 'transition-all inline-block rounded px-0.5';
-                passageContainer.appendChild(span);
-                wordElements.push(span);
-            });
-
-            resetMetricsDisplay();
-        }
-
-        // Normalize text strings for comparison
-        function cleanWord(str) {
-            return str.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()¡!¿?]/g, "").trim();
-        }
-
-        // Start Timing & Speech Tracking
-        function startReadingSession() {
-            if (isReading) return;
-
-            isReading = true;
-            elapsedSeconds = 0;
-            startTime = Date.now();
-            recognizedWords = [];
-            currentWordIndex = 0;
-
-            // UI Button Toggle
-            startBtn.disabled = true;
-            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            stopBtn.disabled = false;
-            stopBtn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-            stopBtn.classList.add('bg-rose-500', 'hover:bg-rose-600', 'text-white', 'shadow-lg', 'shadow-rose-500/20');
-
-            // Reset Highlights
-            wordElements.forEach(el => {
-                el.className = 'transition-all inline-block rounded px-0.5';
-            });
-            speechTranscriptBox.textContent = 'Listening for speech...';
-
-            // Start Stopwatch
-            timerDisplay.textContent = '00:00';
-            timerInterval = setInterval(() => {
-                elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-                const mins = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
-                const secs = String(elapsedSeconds % 60).padStart(2, '0');
-                timerDisplay.textContent = `${mins}:${secs}`;
-            }, 1000);
-
-            // Start Speech Recognition if supported
-            if (speechSupported && recognition) {
-                recognition.lang = currentLanguage === 'es' ? 'es-ES' : 'en-US';
-                
-                recognition.onstart = () => {
-                    micIndicator.className = 'w-3 h-3 rounded-full bg-emerald-500 pulse-subtle';
-                    micStatusText.textContent = "Listening... Speak passage aloud!";
-                };
-
-                recognition.onerror = (event) => {
-                    console.warn("Speech recognition error:", event.error);
-                    micStatusText.textContent = `Mic issue (${event.error}). Timer continues.`;
-                };
-
-                recognition.onresult = (event) => {
-                    let transcript = '';
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        transcript += event.results[i][0].transcript;
-                    }
-                    speechTranscriptBox.textContent = transcript;
-                    processSpokenTranscript(transcript);
-                };
-
-                try {
-                    recognition.start();
-                } catch (e) {
-                    console.log("Recognition start warning:", e);
-                }
-            } else {
-                micIndicator.className = 'w-3 h-3 rounded-full bg-amber-500';
-                micStatusText.textContent = "Manual timer running. Click Finish when done.";
-            }
-        }
-
-        // Live Processing of Spoken Transcript against Passage Spans
-        function processSpokenTranscript(transcript) {
-            const spokenTokens = transcript.toLowerCase().split(/\s+/).map(cleanWord).filter(Boolean);
-            recognizedWords = spokenTokens;
-
-            if (spokenTokens.length === 0) return;
-
-            // Match spoken words with passage tokens sequentially
-            let passageIndex = 0;
-            spokenTokens.forEach(token => {
-                while (passageIndex < wordElements.length) {
-                    const targetWord = wordElements[passageIndex].dataset.cleanWord;
-                    if (targetWord === token || levenshteinDistance(targetWord, token) <= 1) {
-                        wordElements[passageIndex].classList.add('word-matched');
-                        passageIndex++;
-                        break;
-                    }
-                    passageIndex++;
-                }
-            });
-
-            // Highlight current active reading position cursor
-            wordElements.forEach((el, idx) => {
-                if (idx === passageIndex - 1) {
-                    el.classList.add('word-highlight-active');
-                } else {
-                    el.classList.remove('word-highlight-active');
-                }
-            });
-
-            currentWordIndex = passageIndex;
-        }
-
-        // Stop Reading Session & Compute WPM / Accuracy Metrics
-        function stopReadingSession() {
-            if (!isReading) return;
-
-            isReading = false;
-            clearInterval(timerInterval);
-
-            if (speechSupported && recognition) {
-                try {
-                    recognition.stop();
-                } catch (e) {}
-            }
-
-            micIndicator.className = 'w-3 h-3 rounded-full bg-slate-300';
-            micStatusText.textContent = "Session Complete";
-
-            // Restore Buttons
-            startBtn.disabled = false;
-            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            stopBtn.disabled = true;
-            stopBtn.className = 'flex-1 sm:flex-initial bg-slate-200 text-slate-400 cursor-not-allowed font-fredoka text-lg font-semibold px-8 py-3.5 rounded-2xl shadow-none transition flex items-center justify-center gap-2';
-
-            // Calculations
-            const finalTimeSeconds = Math.max(elapsedSeconds, 1);
-            const totalPassageWords = currentPassage.text.split(/\s+/).length;
-            
-            // If Speech API captured words, use recognized count, otherwise default to full passage
-            let wordsCount = currentWordIndex > 0 ? currentWordIndex : recognizedWords.length;
-            if (wordsCount === 0) {
-                wordsCount = totalPassageWords; // Fallback for manual timing
-            }
-
-            // WPM = (Words / Seconds) * 60
-            const calculatedWPM = Math.round((wordsCount / finalTimeSeconds) * 60);
-            
-            // Accuracy Calculation
-            let accuracy = 100;
-            if (currentWordIndex > 0) {
-                accuracy = Math.min(100, Math.round((currentWordIndex / totalPassageWords) * 100));
-            }
-
-            // Render Results
-            scoreWpmEl.textContent = calculatedWPM;
-            scoreAccuracyEl.textContent = `${accuracy}%`;
-            scoreWordsReadEl.textContent = `${wordsCount} of ${totalPassageWords} words`;
-
-            const targetWPM = GRADE_BENCHMARKS[currentGrade];
-            if (calculatedWPM >= targetWPM) {
-                scoreWpmStatusEl.textContent = `🎉 Met Grade ${currentGrade} Target (${targetWPM} WPM)!`;
-                scoreWpmStatusEl.className = "text-[11px] font-bold text-emerald-600";
-            } else {
-                scoreWpmStatusEl.textContent = `Target: ${targetWPM} WPM (${targetWPM - calculatedWPM} away)`;
-                scoreWpmStatusEl.className = "text-[11px] font-semibold text-amber-600";
-            }
-
-            // Update Progress Bar
-            const progressPercent = Math.min(100, Math.round((calculatedWPM / targetWPM) * 100));
-            benchmarkProgressBar.style.width = `${progressPercent}%`;
-            if (progressPercent >= 100) {
-                benchmarkProgressBar.className = "bg-emerald-500 h-full transition-all duration-500 rounded-full";
-            } else {
-                benchmarkProgressBar.className = "bg-brand-500 h-full transition-all duration-500 rounded-full";
-            }
-
-            // Save Attempt to LocalStorage History
-            saveHistoryRecord({
-                id: Date.now(),
-                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                title: currentPassage.title,
-                grade: currentGrade,
-                lang: currentLanguage.toUpperCase(),
-                wpm: calculatedWPM,
-                accuracy: accuracy,
-                timeSec: finalTimeSeconds
-            });
-        }
-
-        // Demo Text-to-Speech audio synthesizer for student listening
-        function playDemoSpeech() {
-            if (!currentPassage) return;
-            
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop active speech
-                const utterance = new SpeechSynthesisUtterance(currentPassage.text);
-                utterance.lang = currentLanguage === 'es' ? 'es-ES' : 'en-US';
-                utterance.rate = 0.9; // Slightly slower pace for elementary learners
-                window.speechSynthesis.speak(utterance);
-            } else {
-                showModal("Feature Not Supported", "Text-to-speech audio demo is not supported in this browser.");
-            }
-        }
-
-        // Save History Entry
-        function saveHistoryRecord(record) {
-            let history = JSON.parse(localStorage.getItem('fluency_history') || '[]');
-            history.unshift(record);
-            if (history.length > 20) history = history.slice(0, 20); // Keep last 20
-            localStorage.setItem('fluency_history', JSON.stringify(history));
-            loadHistory();
-        }
-
-        // Load History List
-        function loadHistory() {
-            const history = JSON.parse(localStorage.getItem('fluency_history') || '[]');
-            historyListEl.innerHTML = '';
-
-            if (history.length === 0) {
-                historyListEl.innerHTML = `<div class="text-center text-slate-400 py-8 font-medium">No practice attempts saved yet.</div>`;
-                return;
-            }
-
-            history.forEach(item => {
-                const target = GRADE_BENCHMARKS[item.grade] || 79;
-                const metGoal = item.wpm >= target;
-                
-                const card = document.createElement('div');
-                card.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between";
-                card.innerHTML = `
-                    <div class="space-y-0.5">
-                        <div class="font-bold text-slate-700 flex items-center gap-1.5">
-                            <span>${item.title}</span>
-                            <span class="text-[10px] px-1.5 py-0.2 bg-slate-200 text-slate-600 rounded font-semibold">${item.lang} G${item.grade}</span>
-                        </div>
-                        <div class="text-[10px] text-slate-400">${item.date} • ${item.timeSec}s elapsed</div>
-                    </div>
-                    <div class="text-right">
-                        <div class="font-fredoka text-base font-bold ${metGoal ? 'text-emerald-600' : 'text-slate-700'}">
-                            ${item.wpm} <span class="text-[10px] font-sans font-normal text-slate-500">WPM</span>
-                        </div>
-                        <div class="text-[10px] font-semibold ${item.accuracy >= 90 ? 'text-emerald-600' : 'text-amber-600'}">
-                            ${item.accuracy}% Acc
-                        </div>
-                    </div>
-                `;
-                historyListEl.appendChild(card);
-            });
-        }
-
-        // Clear Local History
-        function clearHistory() {
-            localStorage.removeItem('fluency_history');
-            loadHistory();
-        }
-
-        // Reset Display Gauges
-        function resetMetricsDisplay() {
-            scoreWpmEl.textContent = '--';
-            scoreAccuracyEl.textContent = '--%';
-            scoreWpmStatusEl.textContent = 'Ready to test';
-            scoreWpmStatusEl.className = 'text-[11px] font-semibold text-slate-500';
-            scoreWordsReadEl.textContent = '0 words read';
-            timerDisplay.textContent = '00:00';
-            benchmarkProgressBar.style.width = '0%';
-            speechTranscriptBox.textContent = 'Spoken words will appear here in real time...';
-        }
-
-        // Simple Levenshtein distance for fuzzy speech matching
-        function levenshteinDistance(a, b) {
-            if (!a || !b) return (a || b).length;
-            const matrix = [];
-            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-            for (let i = 1; i <= b.length; i++) {
-                for (let j = 1; j <= a.length; j++) {
-                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
-                        matrix[i][j] = matrix[i - 1][j - 1];
-                    } else {
-                        matrix[i][j] = Math.min(
-                            matrix[i - 1][j - 1] + 1,
-                            matrix[i][j - 1] + 1,
-                            matrix[i - 1][j] + 1
-                        );
-                    }
-                }
-            }
-            return matrix[b.length][a.length];
-        }
-
-        // Modal Utilities
-        function showModal(title, message) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-            customModal.classList.remove('hidden');
-        }
-
-        function hideModal() {
-            customModal.classList.add('hidden');
-        }
-    </script>
+      historyData.forEach(item => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.date}</td>
+          <td>${item.lang}</td>
+          <td>${item.grade}</td>
+          <td>${item.track}</td>
+          <td>${item.time}</td>
+          <td><strong>${item.wpm} WPM</strong></td>
+          <td>
+            <span class="${item.metTarget ? 'badge-met' : 'badge-missed'}">
+              ${item.metTarget ? 'Target Met ✓' : 'Below Target'}
+            </span>
+          </td>
+        `;
+        historyTable.appendChild(row);
+      });
+    }
+  </script>
 </body>
 </html>
