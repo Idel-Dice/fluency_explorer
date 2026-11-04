@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FluentRead - Dual Immersion Reading Speed Tracker</title>
-  <!-- Google Fonts for Kids-Friendly & Clean Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,15 +21,10 @@
       --highlight-spoken: #a7f3d0;
       --highlight-current: #fef08a;
       --success: #10b981;
-      --warning: #f59e0b;
       --danger: #ef4444;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -60,13 +54,7 @@
     header h1 {
       font-family: 'Fredoka', sans-serif;
       font-size: 2.2rem;
-      letter-spacing: 0.5px;
       margin-bottom: 6px;
-    }
-
-    header p {
-      font-size: 1rem;
-      opacity: 0.92;
     }
 
     .card {
@@ -95,7 +83,6 @@
       font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
     select, button {
@@ -110,11 +97,6 @@
       transition: all 0.2s ease;
     }
 
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    }
-
     .btn {
       font-family: 'Fredoka', sans-serif;
       font-weight: 600;
@@ -127,36 +109,17 @@
       gap: 8px;
     }
 
-    .btn-primary {
-      background-color: var(--primary);
-      color: white;
+    .btn-primary { background-color: var(--primary); color: white; }
+    .btn-primary:hover { background-color: var(--primary-hover); }
+    .btn-secondary { background-color: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-color); }
+    .btn-danger { background-color: var(--danger); color: white; }
+
+    .mic-status-note {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
 
-    .btn-primary:hover {
-      background-color: var(--primary-hover);
-    }
-
-    .btn-secondary {
-      background-color: #f1f5f9;
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-    }
-
-    .btn-secondary:hover {
-      background-color: #e2e8f0;
-    }
-
-    .btn-success {
-      background-color: var(--success);
-      color: white;
-    }
-
-    .btn-danger {
-      background-color: var(--danger);
-      color: white;
-    }
-
-    /* Target Benchmark Display */
     .target-banner {
       display: flex;
       align-items: center;
@@ -168,12 +131,6 @@
       margin-top: 16px;
     }
 
-    .target-banner .target-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
     .target-badge {
       background: var(--primary);
       color: white;
@@ -183,7 +140,6 @@
       font-size: 0.9rem;
     }
 
-    /* Reading Passage Display */
     .passage-container {
       margin-top: 16px;
       padding: 24px;
@@ -193,26 +149,12 @@
       min-height: 180px;
       line-height: 2;
       font-size: 1.35rem;
-      letter-spacing: 0.2px;
-      word-spacing: 2px;
     }
 
-    .word {
-      padding: 2px 4px;
-      border-radius: 4px;
-      transition: background-color 0.2s ease;
-    }
+    .word { padding: 2px 4px; border-radius: 4px; }
+    .word.spoken { background-color: var(--highlight-spoken); }
+    .word.current { background-color: var(--highlight-current); text-decoration: underline; }
 
-    .word.spoken {
-      background-color: var(--highlight-spoken);
-    }
-
-    .word.current {
-      background-color: var(--highlight-current);
-      text-decoration: underline;
-    }
-
-    /* Timer & Metrics Dashboard */
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -232,18 +174,15 @@
       font-family: 'Fredoka', sans-serif;
       font-size: 2rem;
       color: var(--primary);
-      line-height: 1.1;
     }
 
     .metric-label {
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-muted);
-      margin-top: 4px;
       text-transform: uppercase;
     }
 
-    /* Action Toolbar */
     .action-toolbar {
       display: flex;
       gap: 12px;
@@ -251,7 +190,6 @@
       margin-top: 20px;
     }
 
-    /* History Table */
     .history-table {
       width: 100%;
       border-collapse: collapse;
@@ -265,40 +203,8 @@
       border-bottom: 1px solid var(--border-color);
     }
 
-    .history-table th {
-      background-color: #f8fafc;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-    }
-
-    .badge-met {
-      background-color: #d1fae5;
-      color: #065f46;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
-
-    .badge-missed {
-      background-color: #fee2e2;
-      color: #991b1b;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 0.8rem;
-    }
-
-    @media (max-width: 640px) {
-      .metrics-grid {
-        grid-template-columns: 1fr;
-      }
-      .passage-container {
-        font-size: 1.15rem;
-      }
-    }
+    .badge-met { background-color: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
+    .badge-missed { background-color: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 12px; font-weight: 600; }
   </style>
 </head>
 <body>
@@ -309,15 +215,15 @@
       <p>Dual Immersion Reading Speed & Accuracy Tracker</p>
     </header>
 
-    <!-- Configuration Card -->
     <div class="card">
       <div class="controls-grid">
         
         <div class="control-group">
           <label for="mic-select">Microphone Device</label>
-          <select id="mic-select">
+          <select id="mic-select" onchange="onMicChange()">
             <option value="">Default Microphone</option>
           </select>
+          <span class="mic-status-note" id="mic-note">Scanning audio inputs...</span>
         </div>
 
         <div class="control-group">
@@ -342,15 +248,13 @@
         <div class="control-group">
           <label for="track-select">Reading Track</label>
           <select id="track-select" onchange="loadPassage()">
-            <!-- Populated dynamically -->
           </select>
         </div>
 
       </div>
 
-      <!-- Target WPM Banner -->
       <div class="target-banner">
-        <div class="target-info">
+        <div>
           <span>Target Minimum Benchmark:</span>
           <span class="target-badge" id="target-wpm-badge">79 WPM</span>
         </div>
@@ -358,13 +262,9 @@
       </div>
     </div>
 
-    <!-- Passage Reading Card -->
     <div class="card">
-      <div class="passage-container" id="passage-box">
-        <!-- Reading text with span wrappers dynamically inserted here -->
-      </div>
+      <div class="passage-container" id="passage-box"></div>
 
-      <!-- Live Dashboard -->
       <div class="metrics-grid">
         <div class="metric-card">
           <div class="metric-value" id="timer-val">00:00</div>
@@ -380,7 +280,6 @@
         </div>
       </div>
 
-      <!-- Control Buttons -->
       <div class="action-toolbar">
         <button class="btn btn-primary" id="btn-start" onclick="startSession()">▶ Start Reading</button>
         <button class="btn btn-danger" id="btn-stop" onclick="stopSession()" disabled>⏹ Finish & Calculate</button>
@@ -388,7 +287,6 @@
       </div>
     </div>
 
-    <!-- Attempt History Card -->
     <div class="card">
       <h3 style="font-family: 'Fredoka', sans-serif; margin-bottom: 12px;">Reading Session History</h3>
       <table class="history-table">
@@ -403,25 +301,15 @@
             <th>Target Met</th>
           </tr>
         </thead>
-        <tbody id="history-list">
-          <!-- Dynamically populated from localStorage -->
-        </tbody>
+        <tbody id="history-list"></tbody>
       </table>
     </div>
 
   </div>
 
   <script>
-    // --- EDUCATIONAL BENCHMARK TARGETS (WPM) ---
-    const WPM_TARGETS = {
-      1: 60,
-      2: 79,  // Target requested by parent
-      3: 100,
-      4: 115,
-      5: 130
-    };
+    const WPM_TARGETS = { 1: 60, 2: 79, 3: 100, 4: 115, 5: 130 };
 
-    // --- MULTIPLE PASSAGE TRACKS TO PREVENT MEMORIZATION ---
     const PASSAGES = {
       en: {
         1: [
@@ -436,70 +324,56 @@
         ],
         3: [
           { id: "A", title: "Track A: The Rainforest Exploration", text: "Rainforests are full of tall trees and amazing creatures. Colorful parrots fly between the high branches, while playful monkeys swing gracefully from vines." },
-          { id: "B", title: "Track B: Deep Ocean Wonders", text: "The ocean floor is home to giant squids and glowing jellyfish. Oceanographers submerge in submarine vessels to study these creatures in the dark water." },
-          { id: "C", title: "Track C: Desert Ecosystems", text: "Deserts may seem dry and empty, but many nocturnal animals wake up after sunset. Snakes, owls, and foxes hunt when the temperature cools down." }
+          { id: "B", title: "Track B: Deep Ocean Wonders", text: "The ocean floor is home to giant squids and glowing jellyfish. Oceanographers submerge in submarine vessels to study these creatures in the dark water." }
         ],
         4: [
-          { id: "A", title: "Track A: Mountain Expeditions", text: "Scaling steep mountain peaks demands careful physical preparation and reliable thermal equipment. Climbers respect unpredictable weather shifts and navigate icy glaciers together." },
-          { id: "B", title: "Track B: Renewable Energy Breakthroughs", text: "Engineers generate electricity using wind turbines and high-efficiency solar panels. Harnessing natural forces helps preserve air quality and reduce greenhouse gases." },
-          { id: "C", title: "Track C: Historical Discoveries", text: "Archaeologists carefully brush away layers of sand to reveal ancient stone monuments. Each artifact provides clues about daily life centuries ago." }
+          { id: "A", title: "Track A: Mountain Expeditions", text: "Scaling steep mountain peaks demands careful physical preparation and reliable thermal equipment. Climbers respect unpredictable weather shifts and navigate icy glaciers together." }
         ],
         5: [
-          { id: "A", title: "Track A: Space Exploration Milestones", text: "Astronomers utilize orbiting space telescopes to analyze light emitted from distant galaxies billions of light-years away. Analyzing spectral data unlocks fundamental secrets about cosmic origins." },
-          { id: "B", title: "Track B: Marine Ecosystem Preservation", text: "Coral reefs support diverse underwater species, acting as vital nurseries for marine life. Protecting ocean habitats against pollution ensures biological diversity for future generations." },
-          { id: "C", title: "Track C: Artificial Intelligence in Modern Times", text: "Computer scientists develop algorithms capable of analyzing complex mathematical patterns rapidly. Responsible application of technology enhances medical diagnostics and scientific research globally." }
+          { id: "A", title: "Track A: Space Exploration Milestones", text: "Astronomers utilize orbiting space telescopes to analyze light emitted from distant galaxies billions of light-years away. Analyzing spectral data unlocks fundamental secrets about cosmic origins." }
         ]
       },
       es: {
         1: [
           { id: "A", title: "Pista A: El Perro Lalo", text: "El perro Lalo corre en el parque. A Lalo le gusta jugar con su pelota roja y saltar alto en el pasto." },
-          { id: "B", title: "Pista B: La Casa Blanca", text: "Mi casa es grande y blanca. En el jardín hay flores amarillas y un árbol alto donde cantan los pájaros." },
-          { id: "C", title: "Pista C: El Gato de Sofía", text: "Sofía tiene un gato negro con ojos verdes. El gato duerme en una silla suave cerca de la ventana." }
+          { id: "B", title: "Pista B: La Casa Blanca", text: "Mi casa es grande y blanca. En el jardín hay flores amarillas y un árbol alto donde cantan los pájaros." }
         ],
         2: [
           { id: "A", title: "Pista A: La Excursión Escolar", text: "La clase de la maestra Elena fue al museo de ciencias. Los estudiantes vieron esqueletos de dinosaurios y aprendieron cómo vivían hace muchos años." },
-          { id: "B", title: "Pista B: Un Día en la Playa", text: "Carlos y su familia caminaron por la orilla del mar. Encontraron caracoles brillantes y construyeron un gran castillo de arena." },
-          { id: "C", title: "Pista C: La Huerta Familiar", text: "En la primavera, sembramos tomates, lechugas y fresas en el jardín. Todos los días regamos las plantas con agua fresca." }
+          { id: "B", title: "Pista B: Un Día en la Playa", text: "Carlos y su familia caminaron por la orilla del mar. Encontraron caracoles brillantes y construyeron un gran castillo de arena." }
         ],
         3: [
-          { id: "A", title: "Pista A: La Selva Amazónica", text: "La selva amazónica tiene la mayor cantidad de plantas y animales del planeta. Los guacamayos vuelan alto mientras los jaguares caminan en silencio." },
-          { id: "B", title: "Pista B: El Viaje en Tren", text: "El tren cruza las altas montañas y los valles verdes. Desde las ventanas, los pasajeros admiran ríos cristalinos y pueblos pintorescos." },
-          { id: "C", title: "Pista C: El Secreto de las Abejas", text: "Las abejas recolectan néctar de las flores para fabricar miel deliciosa. Son insectos muy importantes para la polinización de los cultivos." }
+          { id: "A", title: "Pista A: La Selva Amazónica", text: "La selva amazónica tiene la mayor cantidad de plantas y animales del planeta. Los guacamayos vuelan alto mientras los jaguares caminan en silencio." }
         ],
         4: [
-          { id: "A", title: "Pista A: Civilizaciones Antiguas", text: "Los mayas construyeron impresionantes pirámides de piedra y desarrollaron un calendario astronómico muy exacto observando las estrellas desde sus templos." },
-          { id: "B", title: "Pista B: El Ciclo del Agua", text: "El agua del océano se evapora con el calor del sol y sube a la atmósfera para formar nubes que luego producen lluvia fresca." },
-          { id: "C", title: "Pista C: Las Islas Galápagos", text: "Estas islas albergan especies únicas como tortugas gigantes e iguanas marinas. Charles Darwin estudió estos animales para comprender la evolución." }
+          { id: "A", title: "Pista A: Civilizaciones Antiguas", text: "Los mayas construyeron impresionantes pirámides de piedra y desarrollaron un calendario astronómico muy exacto observando las estrellas desde sus templos." }
         ],
         5: [
-          { id: "A", title: "Pista A: La Exploración del Espacio", text: "Los telescopios modernos capturan imágenes de galaxias lejanas que emitieron su luz hace millones de años. Los científicos analizan esta radiación para entender el universo." },
-          { id: "B", title: "Pista B: Conservación Ambiental", text: "Proteger los bosques tropicales es fundamental para regular el clima global y salvaguardar la biodiversidad de ecosistemas vulnerables contra la deforestación." },
-          { id: "C", title: "Pista C: La Invención de la Imprenta", text: "La invención de la imprenta revolucionó el acceso al conocimiento en Europa, permitiendo la difusión masiva de libros y la alfabetización de la sociedad." }
+          { id: "A", title: "Pista A: La Exploración del Espacio", text: "Los telescopios modernos capturan imágenes de galaxias lejanas que emitieron su luz hace millones de años. Los científicos analizan esta radiación para entender el universo." }
         ]
       }
     };
 
-    // Application State Variables
     let currentWords = [];
     let activeWordIndex = 0;
     let timerInterval = null;
     let secondsElapsed = 0;
     let isRunning = false;
     let recognition = null;
+    let activeStream = null;
     let historyData = [];
 
-    // Initialize Page Controls & Audio Devices
     window.addEventListener('DOMContentLoaded', () => {
       populateMicrophones();
       onConfigChange();
       loadHistory();
     });
 
-    // Populate Microphone Audio Devices
     async function populateMicrophones() {
       const micSelect = document.getElementById('mic-select');
+      const micNote = document.getElementById('mic-note');
+      
       try {
-        // Request initial mic permission to get device labels
         await navigator.mediaDevices.getUserMedia({ audio: true });
         const devices = await navigator.mediaDevices.enumerateDevices();
         const audioInputs = devices.filter(device => device.kind === 'audioinput');
@@ -511,25 +385,41 @@
           option.text = device.label || `Microphone ${index + 1}`;
           micSelect.appendChild(option);
         });
+
+        micNote.innerText = "USB microphones require setting as Linux system default in Sound Settings.";
       } catch (err) {
-        console.warn('Microphone permission not granted or device enumeration unsupported:', err);
+        micNote.innerText = "Microphone access blocked or unavailable.";
       }
     }
 
-    // Config Handler when Language or Grade Changes
+    async function onMicChange() {
+      const deviceId = document.getElementById('mic-select').value;
+      if (activeStream) {
+        activeStream.getTracks().forEach(track => track.stop());
+      }
+      
+      if (deviceId) {
+        try {
+          activeStream = await navigator.mediaDevices.getUserMedia({
+            audio: { deviceId: { exact: deviceId } }
+          });
+        } catch (err) {
+          console.warn("Could not bind directly to device stream:", err);
+        }
+      }
+    }
+
     function onConfigChange() {
       const lang = document.getElementById('lang-select').value;
       const grade = document.getElementById('grade-select').value;
       
-      // Update WPM Target Badge
       const targetWpm = WPM_TARGETS[grade] || 79;
       document.getElementById('target-wpm-badge').innerText = `${targetWpm} WPM Target`;
 
-      // Update Tracks Selector
       const trackSelect = document.getElementById('track-select');
       trackSelect.innerHTML = '';
       
-      const availableTracks = PASSAGES[lang][grade];
+      const availableTracks = PASSAGES[lang][grade] || PASSAGES[lang][1];
       availableTracks.forEach(track => {
         const opt = document.createElement('option');
         opt.value = track.id;
@@ -559,10 +449,9 @@
       const grade = document.getElementById('grade-select').value;
       const trackId = document.getElementById('track-select').value || "A";
 
-      const tracks = PASSAGES[lang][grade];
+      const tracks = PASSAGES[lang][grade] || PASSAGES[lang][1];
       const selectedPassage = tracks.find(t => t.id === trackId) || tracks[0];
 
-      // Parse text into individual word spans
       const passageBox = document.getElementById('passage-box');
       passageBox.innerHTML = '';
       
@@ -593,8 +482,6 @@
       });
     }
 
-    // --- SESSION RUNTIME CONTROLS ---
-
     function startSession() {
       if (isRunning) return;
       isRunning = true;
@@ -616,33 +503,23 @@
         const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
         const secs = String(secondsElapsed % 60).padStart(2, '0');
         document.getElementById('timer-val').innerText = `${mins}:${secs}`;
-        
         calculateLiveMetrics();
       }, 1000);
     }
 
     function calculateLiveMetrics() {
       if (secondsElapsed <= 0) return;
-      
-      // Calculate WPM based on completed words
       const minutes = secondsElapsed / 60;
       const wpm = Math.round(activeWordIndex / minutes);
       document.getElementById('wpm-val').innerText = isNaN(wpm) ? 0 : wpm;
 
-      // Accuracy percentage based on progress through the passage
       const accuracy = Math.round((activeWordIndex / currentWords.length) * 100);
       document.getElementById('accuracy-val').innerText = `${Math.min(accuracy, 100)}%`;
     }
 
-    // --- SPEECH RECOGNITION (WEB SPEECH API) ---
-
     function initSpeechRecognition() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      
-      if (!SpeechRecognition) {
-        console.warn('Web Speech API is not supported in this browser. Stopwatch timing remains active.');
-        return;
-      }
+      if (!SpeechRecognition) return;
 
       recognition = new SpeechRecognition();
       recognition.continuous = true;
@@ -656,26 +533,15 @@
         }
       };
 
-      recognition.onerror = (err) => {
-        console.warn('Speech recognition error:', err.error);
-      };
-
       recognition.onend = () => {
-        if (isRunning) {
-          recognition.start(); // Auto-restart if session active
-        }
+        if (isRunning) try { recognition.start(); } catch(e){}
       };
 
-      try {
-        recognition.start();
-      } catch (err) {
-        console.warn('Could not start recognition:', err);
-      }
+      try { recognition.start(); } catch (err) {}
     }
 
     function matchSpokenWords(transcript) {
       const spokenTokens = transcript.trim().split(/\s+/);
-      
       spokenTokens.forEach(token => {
         if (activeWordIndex < currentWords.length) {
           const targetWord = currentWords[activeWordIndex].toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
@@ -685,11 +551,7 @@
             activeWordIndex++;
             updateHighlighting();
             calculateLiveMetrics();
-
-            // Automatic completion if the last word is read
-            if (activeWordIndex >= currentWords.length) {
-              stopSession();
-            }
+            if (activeWordIndex >= currentWords.length) stopSession();
           }
         }
       });
@@ -698,23 +560,18 @@
     function stopSession() {
       if (!isRunning) return;
       isRunning = false;
-      
       clearInterval(timerInterval);
       
-      if (recognition) {
-        try { recognition.stop(); } catch(e) {}
-      }
+      if (recognition) try { recognition.stop(); } catch(e) {}
 
       document.getElementById('btn-start').disabled = false;
       document.getElementById('btn-stop').disabled = true;
 
-      // Final WPM Calculation
       const finalWordCount = activeWordIndex > 0 ? activeWordIndex : currentWords.length;
       const minutes = Math.max(secondsElapsed / 60, 0.01);
       const finalWpm = Math.round(finalWordCount / minutes);
       
       document.getElementById('wpm-val').innerText = finalWpm;
-
       saveAttempt(finalWpm);
     }
 
@@ -722,15 +579,11 @@
       stopSession();
       secondsElapsed = 0;
       activeWordIndex = 0;
-      
       document.getElementById('timer-val').innerText = "00:00";
       document.getElementById('wpm-val').innerText = "0";
       document.getElementById('accuracy-val').innerText = "100%";
-      
       updateHighlighting();
     }
-
-    // --- LOCAL STORAGE & HISTORY TRACKING ---
 
     function saveAttempt(wpm) {
       const lang = document.getElementById('lang-select').value.toUpperCase();
@@ -750,24 +603,20 @@
       };
 
       historyData.unshift(attempt);
-      if (historyData.length > 10) historyData.pop(); // Keep last 10 attempts
-      
+      if (historyData.length > 10) historyData.pop();
       localStorage.setItem('fluentread_history', JSON.stringify(historyData));
       renderHistory();
     }
 
     function loadHistory() {
       const saved = localStorage.getItem('fluentread_history');
-      if (saved) {
-        try { historyData = JSON.parse(saved); } catch(e) { historyData = []; }
-      }
+      if (saved) try { historyData = JSON.parse(saved); } catch(e) { historyData = []; }
       renderHistory();
     }
 
     function renderHistory() {
       const historyTable = document.getElementById('history-list');
       historyTable.innerHTML = '';
-
       if (historyData.length === 0) {
         historyTable.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">No sessions recorded yet.</td></tr>`;
         return;
